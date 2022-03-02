@@ -30,6 +30,4 @@ public:
   void load(string& fname);
 };
 
-
-
 #endif

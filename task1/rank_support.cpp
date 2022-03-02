@@ -101,13 +101,18 @@ uint64_t rank_support::overhead()
 {
   return (sizeof(Rs_) + (ceil(N_/S_) - 1) * sizeof(ceil(log2(N_)))
        + sizeof(Rb_) + (ceil(N_/B_) - 2) * sizeof(ceil(log2(ceil(log2(N_)))))
-       + 3*sizeof(uint64_t))*8 + b_->size();
+       + 3 * sizeof(float)) * 8 + b_->size();
 }
 
 /* Saves the rank data structure for this bit vector to the file fname 
 (your bit vector should also have a save() function). */
 void rank_support::save(string& fname)
 {
+  // TODO:
+  // store b_->to_string()
+  // store N_ S_ and B_ on same line
+  // store Rs_ (iterate through all values). May need to store size explicitly
+  // store Rb_ (iterate through all values) May need to store size explicitly
   return;
 }
 
@@ -115,6 +120,10 @@ void rank_support::save(string& fname)
 (your bit vector should also have a load() function). */
 void rank_support::load(string& fname)
 {
+  // TODO:
+  // read b_->to_string() and construct new bitset with bit string
+  // convert N_ S_ and B_ into floats using scanf
+  // construct Rs_ and Rb_ using size, then iterate and populate with values
   return;
 }
 
