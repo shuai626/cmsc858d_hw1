@@ -10,7 +10,7 @@
 using namespace std;
 
 // Modify N to change size of bit vector
-const int N = 32;
+const int N = 16;
 
 class rank_support
 {

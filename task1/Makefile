@@ -1,12 +1,11 @@
 CC=g++
-CFLAGS=  -std=c++20
 DEPS=rank_support.h
 
 make: main.o rank_support.o
-	$(CC) -o rank.exe main.o rank_support.o $(CFLAGS)
+	$(CC) -o rank.exe main.o rank_support.o
 
 %.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c -o $@ $<
 
 clean: 
 	rm *.o rank.exe
