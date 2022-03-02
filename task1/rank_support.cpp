@@ -7,14 +7,8 @@ rank_support::rank_support(bitset<N>* b)
   S_ = floor(ceil(log2(N_))*ceil(log2(N_))/2);
   B_ = floor(ceil(log2(N_))/2);
 
-  cout << N_ << " " << S_ << " " << B_ << endl;
-
   uint64_t Rs_size_ = ceil(N_/S_) - 1;
   uint64_t Rb_size_ = ceil(N_/B_) - 2;
-
-  cout << N_/S_ << " " << N_/B_ << endl;
-
-  cout << Rs_size_ << " " << Rb_size_ << endl;
 
   // Initialize the superblock and block arrays
   // The first index always stores 0, optimize by dropping it
@@ -36,7 +30,6 @@ rank_support::rank_support(bitset<N>* b)
         Rs_[i] += 1;
       }
     }
-    cout << "RS "<< Rs_[i] << endl;
   }
   
   // Populate the block array
@@ -55,7 +48,6 @@ rank_support::rank_support(bitset<N>* b)
         Rb_[i] += 1;
       }
     }
-    cout << "RB "<< Rb_[i] << endl;
   }
 }
 
