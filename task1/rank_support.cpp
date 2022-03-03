@@ -87,7 +87,7 @@ uint64_t rank_support::overhead() {
 void rank_support::save(string& fname) {
   ofstream out;
   out.open(fname);
-  out << (b_->to_ullong()) << endl;
+  out << (b_->to_string()) << endl;
 
   out << fixed << setprecision(5) << (uint64_t)N_ << endl;
   out << fixed << setprecision(5) << (uint64_t)S_ << endl;
