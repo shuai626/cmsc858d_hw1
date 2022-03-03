@@ -1,7 +1,6 @@
 #include "rank_support.h"
 
-rank_support::rank_support(bitset<N>* b)
-{
+rank_support::rank_support(bitset<N>* b) {
   b_ = b;
   N_ = b_->size();
   S_ = floor(ceil(log2(N_))*ceil(log2(N_))/2);
@@ -17,16 +16,12 @@ rank_support::rank_support(bitset<N>* b)
 
   // Populate the superblock array
   uint64_t i, j;
-  for (i = 0; i < Rs_size_; i++)
-  {
-    if (i > 0) 
-    {
+  for (i = 0; i < Rs_size_; i++) {
+    if (i > 0) {
       Rs_[i] += Rs_[i-1];
     }
-    for (j = S_*i; j < S_*(i+1); j++)
-    {
-      if ((*b_)[j]) 
-      {
+    for (j = S_*i; j < S_*(i+1); j++) {
+      if ((*b_)[j]) {
         Rs_[i] += 1;
       }
     }
@@ -34,17 +29,13 @@ rank_support::rank_support(bitset<N>* b)
   
   // Populate the block array
   int r = floor(S_/B_ - 1);
-  for (i = 0; i < Rb_size_; i++)
-  {
+  for (i = 0; i < Rb_size_; i++) {
     int Z = floor((i)/r)*S_+((i)%r)*B_;
-    if (i % r != 0)
-    {
+    if (i % r != 0) {
       Rb_[i] += Rb_[i-1];
     }
-    for (j = Z; j < Z+B_; j++)
-    {
-      if ((*b_)[j]) 
-      {
+    for (j = Z; j < Z+B_; j++) {
+      if ((*b_)[j]) {
         Rb_[i] += 1;
       }
     }
@@ -53,10 +44,8 @@ rank_support::rank_support(bitset<N>* b)
 
 /* Returns the number of 1s in the underlying bit-vector 
 up to position i (inclusive). */
-uint64_t rank_support::rank1(uint64_t i)
-{
-  if (i == N)
-  {
+uint64_t rank_support::rank1(uint64_t i) {
+  if (i == N) {
     return b_->count();
   }
 
@@ -65,14 +54,12 @@ uint64_t rank_support::rank1(uint64_t i)
 
   int rank = 0;
 
-  if (s > 0)
-  {
+  if (s > 0) {
     rank += Rs_[s-1];
   }
 
   int r = floor(S_/B_);
-  if (b % r != 0)
-  {
+  if (b % r != 0) {
     int j = floor((b)/r)*(r-1) + b%r - 1;
     rank += Rb_[j];
   }
@@ -89,8 +76,7 @@ uint64_t rank_support::rank1(uint64_t i)
 
 /* Returns the size of the rank data structure (in bits) that is 
 required to support constant-time rank on the current bitvector. */
-uint64_t rank_support::overhead()
-{
+uint64_t rank_support::overhead() {
   return (sizeof(Rs_) + (ceil(N_/S_) - 1) * sizeof(ceil(log2(N_)))
        + sizeof(Rb_) + (ceil(N_/B_) - 2) * sizeof(ceil(log2(ceil(log2(N_)))))
        + 3 * sizeof(float)) * 8 + b_->size();
@@ -98,29 +84,80 @@ uint64_t rank_support::overhead()
 
 /* Saves the rank data structure for this bit vector to the file fname 
 (your bit vector should also have a save() function). */
-void rank_support::save(string& fname)
-{
-  // TODO:
-  // store b_->to_string()
-  // store N_ S_ and B_ on same line
-  // store Rs_ (iterate through all values). May need to store size explicitly
-  // store Rb_ (iterate through all values) May need to store size explicitly
+void rank_support::save(string& fname) {
+  ofstream out;
+  out.open(fname);
+  out << (b_->to_ullong()) << endl;
+
+  out << fixed << setprecision(5) << (uint64_t)N_ << endl;
+  out << fixed << setprecision(5) << (uint64_t)S_ << endl;
+  out << fixed << setprecision(5) << (uint64_t)B_ << endl;
+
+  uint64_t i;
+  uint64_t Rs_size_ = ceil(N_/S_) - 1;
+  out << Rs_size_ << endl;
+  for (i = 0; i < Rs_size_; i++) {
+    if (i > 0) {
+      out << " ";
+    }
+    out << Rs_[i];
+  }
+  out << endl;
+
+  cout << Rb_[5];
+
+  uint64_t Rb_size_ = ceil(N_/B_) - 2;
+  out << Rb_size_ << endl;
+  for (i = 0; i < Rb_size_; i++) {
+    if (i > 0) {
+      out << " ";
+    }
+    out << Rb_[i];
+  }
+  out << endl;
+
+  out.close();
+
   return;
 }
 
 /* Loads the rank data structure for this bit vector from the file fname 
 (your bit vector should also have a load() function). */
-void rank_support::load(string& fname)
-{
-  // TODO:
+void rank_support::load(string& fname) {
+    // TODO: AWDAWD
+  ifstream in(fname);
+  string line;
+
+  getline(in, line);
   // read b_->to_string() and construct new bitset with bit string
-  // convert N_ S_ and B_ into floats using scanf
-  // construct Rs_ and Rb_ using size, then iterate and populate with values
+
+  getline(in, line);
+  // N_
+
+  getline(in, line);
+  // S_
+
+  getline(in, line);
+  // B_
+
+  getline(in, line);
+  // Rs_size_
+
+  getline(in, line);
+  // Rs_
+
+  getline(in, line);
+  // Rb_size_
+
+  getline(in, line);
+  // Rb_
+
+  in.close();
+
   return;
 }
 
-rank_support::~rank_support()
-{
+rank_support::~rank_support() {
   free(Rs_);
   free(Rb_);
 }

@@ -20,5 +20,8 @@ int main () {
 
     cout << "Overhead (in bits): " << r.overhead() << endl;
 
+    string file = "test";
+    r.save(file);
+
     return 0;
 }

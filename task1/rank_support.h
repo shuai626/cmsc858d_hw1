@@ -4,6 +4,7 @@
 #include <bit> // For popcount
 #include <bitset> // For bit vectors
 #include <iostream> // For save and load files
+#include <fstream> // For save and load files
 #include <math.h> // For log2 function
 #include <algorithm> // For reversing bit string
 
@@ -12,8 +13,7 @@ using namespace std;
 // Modify N to change size of bit vector
 const int N = 16;
 
-class rank_support
-{
+class rank_support {
   bitset<N>* b_;
   uint64_t* Rs_;
   uint64_t* Rb_;
