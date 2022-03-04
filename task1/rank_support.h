@@ -11,6 +11,8 @@
 
 using namespace std;
 
+// TODO: CONSIDER USING sdsl FOR BIT VECTOR
+
 // Modify N to change size of bit vector
 const int SIZE = 16;
 
