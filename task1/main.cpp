@@ -14,8 +14,7 @@ int main () {
 
     rank_support r(&bs);
     int i;
-    for (i = 1; i <= SIZE; i++) 
-    {
+    for (i = 1; i <= SIZE; i++) {
       cout << "Rank " << i << ": " << r.rank1(i) << endl;
     }
     cout << "Overhead (in bits): " << r.overhead() << endl;
@@ -24,8 +23,7 @@ int main () {
     // r.save(file);
     r.load(file);
 
-    for (i = 1; i <= SIZE; i++) 
-    {
+    for (i = 1; i <= SIZE; i++) {
       cout << "Rank " << i << ": " << r.rank1(i) << endl;
     }
     cout << "Overhead (in bits): " << r.overhead() << endl;
