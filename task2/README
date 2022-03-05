@@ -1,1 +1,4 @@
 ## Compilation Instructions
+
+1. Call `make` 
+2. Run `select.exe`
