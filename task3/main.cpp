@@ -2,31 +2,42 @@
 using namespace std;
 
 int main () {
-    // string str = "10010111010010100000000000000000";
-    // string str = "1001011101001010";
-    string str = "1111111111111111";
-    reverse(str.begin(), str.end());
+    sparse_array s;
 
-    // Flip bits since bitset accesses values from lowest to greatest bit
-    std::bitset<SIZE> bs(str);
+    s.create(SIZE);
 
-    cout << "Bitvector: " << bs.to_string() << endl;
+    string s1 = "foo";
+    string s2 = "bar";
+    string s3 = "baz";
+    // s.append(s1,2);
+    // s.append(s2,5);
+    // s.append(s3,10);
 
-    rank_support r(&bs);
+    string e = "NONE";
     int i;
-    for (i = 1; i <= SIZE; i++) {
-      cout << "Rank " << i << ": " << r.rank1(i) << endl;
+
+    for (i = 1; i <= s.num_elem() + 4; i++) {
+      cout << "Get rank at " << i << ": " << s.get_at_rank(i, e) << "| Value: " << e << endl;
+      e = "NONE";
     }
-    cout << "Overhead (in bits): " << r.overhead() << endl;
 
-    select_support s(&r);
-
-    for (i = 1; i <= r.rank1(SIZE); i++) {
-      cout << "Select " << i << ": " << s.select1(i) << endl;
+    for (i = 1; i <= s.size(); i++) {
+      cout << "Get index at " << i << ": " << s.get_at_index(i, e) << "| Value: " << e << endl;
+      e = "NONE";
     }
-    cout << "Overhead (in bits): " << s.overhead() << endl;
 
-    
+    string fname = "test";
+    s.load(fname);
+
+    for (i = 1; i <= s.num_elem() + 4; i++) {
+      cout << "Get rank at " << i << ": " << s.get_at_rank(i, e) << "| Value: " << e << endl;
+      e = "NONE";
+    }
+
+    for (i = 1; i <= s.size(); i++) {
+      cout << "Get index at " << i << ": " << s.get_at_index(i, e) << "| Value: " << e << endl;
+      e = "NONE";
+    }
 
     return 0;
 }

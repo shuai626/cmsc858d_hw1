@@ -17,11 +17,12 @@ using namespace std;
 const int SIZE = 16;
 
 class rank_support {
-  bitset<SIZE>* b_;
   uint64_t* Rs_;
   uint64_t* Rb_;
 
 public:
+  bitset<SIZE>* b_;
+
   rank_support(bitset<SIZE>* b);
   ~rank_support();
   uint64_t rank1(uint64_t i);

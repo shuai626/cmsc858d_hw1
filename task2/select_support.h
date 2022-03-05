@@ -6,9 +6,11 @@
 using namespace std;
 
 class select_support {
-  rank_support* r_;
+
 
 public:
+  rank_support* r_;
+  
   select_support(rank_support* r);
   uint64_t select1(uint64_t i);
   uint64_t overhead();

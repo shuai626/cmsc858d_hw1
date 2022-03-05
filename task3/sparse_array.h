@@ -2,13 +2,16 @@
 #define SPARSE_ARRAY
 
 #include "../task2/select_support.h"
+#include <vector>
 
 using namespace std;
 
 class sparse_array {
-  select_support* s_;
+  vector<string> elems_;
 
 public:
+  bitset<SIZE> b_;
+
   void create(uint64_t size);
   void append(string elem, uint64_t pos);
   bool get_at_rank(uint64_t r, string& elem);
