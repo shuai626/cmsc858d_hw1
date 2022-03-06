@@ -3,8 +3,8 @@
 /* Creates an empty sparse array of length size 
   (the size of the underlying bitvector you will create). */
 void sparse_array::create(uint64_t size) {
-  if (size != SIZE) {
-    throw std::invalid_argument( "size provided is not templated SIZE" );
+  if (size <= SIZE) {
+    throw std::invalid_argument( "size provided will not fit in bitvector of length SIZE" );
   }
   b_.reset();
 }
