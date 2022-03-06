@@ -8,6 +8,7 @@ using namespace std;
 
 class sparse_array {
   vector<string> elems_;
+  uint64_t size_;
 
 public:
   bitset<SIZE> b_;

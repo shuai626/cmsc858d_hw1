@@ -11,8 +11,8 @@ rank_support::rank_support(bitset<SIZE>* b) {
 
   // Initialize the superblock and block arrays
   // The first index always stores 0, optimize by dropping it
-  Rs_ = (uint64_t *) calloc(Rs_size_, sizeof(ceil(log2(N))));
-  Rb_ = (uint64_t *) calloc(Rb_size_, sizeof(ceil(log2(ceil(log2(N))))));
+  Rs_ = (uint64_t *) calloc(Rs_size_, ceil(sizeof(ceil(log2(N)))/8));
+  Rb_ = (uint64_t *) calloc(Rb_size_, ceil(sizeof(ceil(log2(ceil(log2(N))))/8)));
 
   // Populate the superblock array
   uint64_t i, j;
@@ -86,8 +86,8 @@ uint64_t rank_support::overhead() {
   float S = floor(ceil(log2(N))*ceil(log2(N))/2);
   float B = floor(ceil(log2(N))/2);
 
-  return (sizeof(Rs_) + (ceil(N/S) - 1) * sizeof(ceil(log2(N)))
-       + sizeof(Rb_) + (ceil(N/B) - 2) * sizeof(ceil(log2(ceil(log2(N))))))
+  return (sizeof(Rs_) + (ceil(N/S) - 1) * ceil(sizeof(ceil(log2(N)))/8)
+       + sizeof(Rb_) + (ceil(N/B) - 2) * ceil(sizeof(ceil(log2(ceil(log2(N))))/8)))
         * 8 + b_->size();
 }
 

@@ -3,9 +3,10 @@
 /* Creates an empty sparse array of length size 
   (the size of the underlying bitvector you will create). */
 void sparse_array::create(uint64_t size) {
-  if (size <= SIZE) {
+  if (size > SIZE) {
     throw std::invalid_argument( "size provided will not fit in bitvector of length SIZE" );
   }
+  size_ = size;
   b_.reset();
 }
 
@@ -16,7 +17,7 @@ void sparse_array::create(uint64_t size) {
   assume that you will always have pos < size (but you should 
   probably guard against this anyway). */
 void sparse_array::append(string elem, uint64_t pos) {
-  if (pos <= SIZE) {
+  if (pos <= size_) {
     b_.set(pos - 1, true);
 
     elems_.push_back(elem);
@@ -64,14 +65,14 @@ uint64_t sparse_array::num_elem_at(uint64_t r) {
 
 /*  Returns the size of the sparse array. */
 uint64_t sparse_array::size() {
-  return SIZE;
+  return size_;
 }
 
 /* Returns the number of present elements in the sparse array 
   (i.e. the number of 1s in the bitvector). */
 uint64_t sparse_array::num_elem() {
   rank_support r_(&b_);
-  return r_.rank1(SIZE);
+  return r_.rank1(size_);
 }
 
 /* Saves the sparse array to the file fname.*/
@@ -79,6 +80,7 @@ void sparse_array::save(string& fname) {
   ofstream out;
   out.open(fname);
   out << b_.to_string() << endl;
+  out << size_ << endl;
 
   int i;
   for (i = 0; i < elems_.size(); i++) {
@@ -101,8 +103,11 @@ void sparse_array::load(string& fname) {
   b_ &= 0b0;
   b_ |= new_b;
 
-  elems_.clear();
+  getline(in, line);
+  size_ = stoll(line);
 
+  elems_.clear();
+  
   while(getline(in, line))
 	{
 		elems_.push_back(line);
