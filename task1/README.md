@@ -1,20 +1,20 @@
 ## Interface
 
-* rank_support(bitset<SIZE>* b)
+### * rank_support(bitset<SIZE>### * b)
 
 Initializes a `rank_support` structure with a pointer to a bitset.
 Bitsets store a maximum of `SIZE` bits which is determined at compile-time.
 The `SIZE` variable can be modified in `rank_support.h`.
 
-* uint64_t rank1(uint64_t i)
+### * uint64_t rank1(uint64_t i)
 
 Returns the rank of the `ith` element in the bitset. `i` is **1-indexed**: i.e. 1 <= `i` <= `SIZE`.
 
-* uint64_t overhead()
+### * uint64_t overhead()
 
 Return the number of bits that the `rank_support` class uses.
 
-* void save(string& fname)
+### * void save(string& fname)
 
 Serializes the `rank_support` class into file `task1/<fname>`.
 
@@ -25,7 +25,7 @@ line2: <elem1 of superblock table> <elem2> ...
 line3: <elem1 of block table> <elem2> ...
 ```
 
-* void load(string& fname)
+### * void load(string& fname)
 
 Deserializes the file `filename` into the `rank_support` class.
 
