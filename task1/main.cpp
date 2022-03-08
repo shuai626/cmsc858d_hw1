@@ -34,23 +34,12 @@ int experiment (int capacity, int rank1_operations) {
 
 int main () {
     int i;
-    // string s = "10010111010010100000000000000000";
-    // string s = "1001011101001010";
-    // string s = "0100100001000000";
-    // reverse(s.begin(), s.end());
-    // Flip bits since bitset accesses values from lowest to greatest bit
+
     std::bitset<SIZE> bs(0);
 
-    // cout << "Bitvector: " << bs.to_string() << endl;
-
     rank_support r(&bs);
-
-    string file = "test";
+    string file = "rank_serialize";
     r.load(file);
-
-    for (i = 1; i <= SIZE; i++) {
-      cout << "Rank " << i << ": " << r.rank1(i) << endl;
-    }
 
     int capacity = SIZE/2;
     int rank1_operations = 100;
