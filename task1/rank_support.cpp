@@ -75,7 +75,7 @@ uint64_t rank_support::rank1(uint64_t i) {
   Rp <<= (N - i + b*B);
   Rp >>= (N - i + b*B);
 
-  rank += Rp.count();
+  rank += popcount(Rp.to_ullong());
   return rank;
 }
 

@@ -8,6 +8,7 @@
 #include <sstream> // For load function
 #include <math.h> // For log2 function
 #include <algorithm> // For reversing bit string
+#include <sdsl/bit_vectors.hpp>
 
 using namespace std;
 
