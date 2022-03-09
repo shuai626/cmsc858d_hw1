@@ -4,15 +4,15 @@
 
 using namespace std;
 
-int experiment (int capacity, int rank1_operations) {
-    std::bitset<SIZE> bs_(0);
+int experiment (int size, int capacity, int rank1_operations) {
+    sdsl::bit_vector bs_(size);
     srand(time(NULL));
 
     int i;
     for (i = 0; i < capacity; i++) {
-      int X = rand() % SIZE;
+      int X = rand() % bs_.size();
 
-      bs_.set(X);
+      bs_[X]=1;
     }
 
     rank_support r_(&bs_);
@@ -21,7 +21,7 @@ int experiment (int capacity, int rank1_operations) {
     auto start = chrono::high_resolution_clock::now();
     for (i = 0; i < rank1_operations; i++) {
       // int X = rand() % SIZE + 1;
-      int X = i % SIZE + 1;
+      int X = i % bs_.size() + 1;
 
       r_.rank1(X);
     }
@@ -32,23 +32,23 @@ int experiment (int capacity, int rank1_operations) {
     return duration.count();
 }
 
-int main () {
+int main (int argc, char **argv) {
     int i;
 
-    std::bitset<SIZE> bs(0);
+    int size = atoi(argv[1]);
 
-    rank_support r(&bs);
-    string file = "rank_serialize";
-    r.load(file);
+    sdsl::bit_vector bs_(size);
 
-    int capacity = SIZE/2;
+    rank_support r(&bs_);
+
+    int capacity = bs_.size()/2;
     int rank1_operations = 100;
-    int trials = 10000;
+    int trials = 100;
 
     float avg = 0;
 
     for (i = 0; i < trials; i++) {
-      avg += experiment(capacity, rank1_operations);
+      avg += experiment(size, capacity, rank1_operations);
     }
     avg /= trials;
     cout << "Average time (in microseconds): " << avg << endl;

@@ -1,43 +1,52 @@
 #include "rank_support.h"
 
-rank_support::rank_support(bitset<SIZE>* b) {
+rank_support::rank_support(sdsl::bit_vector* b) {
   b_ = b;
   float N = b_->size();
   float S = floor(ceil(log2(N))*ceil(log2(N))/2);
   float B = floor(ceil(log2(N))/2);
 
-  uint64_t Rs_size_ = ceil(N/S) - 1;
-  uint64_t Rb_size_ = ceil(N/B) - 2;
+  uint64_t Rs_size_ = ceil(N/S);
+  uint64_t Rb_size_ = ceil(N/B);
 
   // Initialize the superblock and block arrays
   // The first index always stores 0, optimize by dropping it
-  Rs_ = (uint64_t *) calloc(Rs_size_, ceil(sizeof(ceil(log2(N)))/8));
-  Rb_ = (uint64_t *) calloc(Rb_size_, ceil(sizeof(ceil(log2(ceil(log2(N))))/8)));
+  Rs_ = (uint64_t *) calloc(Rs_size_, ceil(sizeof(ceil(log2(N))))/8);
+  Rb_ = (uint64_t *) calloc(Rb_size_, ceil(sizeof(ceil(log2(ceil(log2(N))))))/8);
+
+  
+  uint64_t i;
+  uint64_t j = 0;
+  uint64_t c = 0;
+  uint64_t _S = floor(S);
+  uint64_t _B = floor(B);
 
   // Populate the superblock array
-  uint64_t i, j;
-  for (i = 0; i < Rs_size_; i++) {
-    if (i > 0) {
-      Rs_[i] += Rs_[i-1];
+  for (i = 0; i < N; i++) {
+    if (i % _S == 0) {
+      Rs_[j] = c;
+      j++;
     }
-    for (j = S*i; j < S*(i+1); j++) {
-      if ((*b_)[j]) {
-        Rs_[i] += 1;
-      }
+
+    if ((*b_)[i] == 1) {
+      c++;
     }
   }
-  
+
   // Populate the block array
-  int r = floor(S/B - 1);
-  for (i = 0; i < Rb_size_; i++) {
-    int Z = floor((i)/r)*S+((i)%r)*B;
-    if (i % r != 0) {
-      Rb_[i] += Rb_[i-1];
+  j = 0;
+  c = 0;
+  for (i = 0; i < N; i++) {
+    if (i % _S == 0) {
+      c = 0;
     }
-    for (j = Z; j < Z+B; j++) {
-      if ((*b_)[j]) {
-        Rb_[i] += 1;
-      }
+    if (i % _B == 0) {
+      Rb_[j] = c;
+      j++;
+    }
+    
+    if ((*b_)[i] == 1) {
+      c++;
     }
   }
 }
@@ -45,37 +54,35 @@ rank_support::rank_support(bitset<SIZE>* b) {
 /* Returns the number of 1s in the underlying bit-vector 
 up to position i (inclusive). */
 uint64_t rank_support::rank1(uint64_t i) {
+  
   float N = b_->size();
   float S = floor(ceil(log2(N))*ceil(log2(N))/2);
   float B = floor(ceil(log2(N))/2);
 
-  if (i == N) {
-    return b_->count();
+  uint64_t Rs_size_ = ceil(N/S);
+  uint64_t Rb_size_ = ceil(N/B);
+
+  uint64_t s = floor((i)/S);
+  uint64_t b = floor((i)/B);
+
+  if (i/S >= Rs_size_) {
+    s = Rs_size_ - 1;
+  }
+  if (i/B >= Rb_size_) {
+    b = Rb_size_ - 1;
   }
 
-  uint64_t s = floor((i-1)/S);
-  uint64_t b = floor((i-1)/B);
-
-  int rank = 0;
-
-  if (s > 0) {
-    rank += Rs_[s-1];
-  }
-
-  int r = floor(S/B);
-
-  if (b % r != 0) {
-    int j = floor((b)/r)*(r-1) + b%r - 1;
-    rank += Rb_[j];
-  }
+  int rank = Rs_[s] + Rb_[b];
 
   // Use popcount for the Rp block. Extract block by building mask
-  bitset<SIZE> Rp(*b_);
-  Rp >>= b*B;
-  Rp <<= (N - i + b*B);
-  Rp >>= (N - i + b*B);
+  uint64_t x = floor(B);
+  uint64_t l = i - b*x;
+  if (l > 64) {
 
-  rank += popcount(Rp.to_ullong());
+  }
+  uint64_t v = b_->get_int(b*x, l);
+
+  rank += popcount(v);
   return rank;
 }
 
@@ -86,8 +93,8 @@ uint64_t rank_support::overhead() {
   float S = floor(ceil(log2(N))*ceil(log2(N))/2);
   float B = floor(ceil(log2(N))/2);
 
-  return (sizeof(Rs_) + (ceil(N/S) - 1) * ceil(sizeof(ceil(log2(N)))/8)
-       + sizeof(Rb_) + (ceil(N/B) - 2) * ceil(sizeof(ceil(log2(ceil(log2(N))))/8)))
+  return (sizeof(Rs_) + (ceil(N/S)) * ceil(sizeof(ceil(log2(N)))/8)
+       + sizeof(Rb_) + (ceil(N/B)) * ceil(sizeof(ceil(log2(ceil(log2(N)))))/8))
         * 8 + b_->size();
 }
 
@@ -100,10 +107,12 @@ void rank_support::save(string& fname) {
 
   ofstream out;
   out.open(fname);
-  out << (b_->to_string()) << endl;
+  string bv_fname = fname + "_bv";
+  sdsl::store_to_file(*b_, bv_fname);
+  out << bv_fname << endl;
 
   uint64_t i;
-  uint64_t Rs_size_ = ceil(N/S) - 1;
+  uint64_t Rs_size_ = ceil(N/S);
   for (i = 0; i < Rs_size_; i++) {
     if (i > 0) {
       out << " ";
@@ -112,7 +121,7 @@ void rank_support::save(string& fname) {
   }
   out << endl;
 
-  uint64_t Rb_size_ = ceil(N/B) - 2;
+  uint64_t Rb_size_ = ceil(N/B);
   for (i = 0; i < Rb_size_; i++) {
     if (i > 0) {
       out << " ";
@@ -133,17 +142,16 @@ void rank_support::load(string& fname) {
   string line;
 
   getline(in, line);
-
-  bitset<SIZE> new_b(line);
-  *b_ &= 0b0;
-  *b_ |= new_b;
+  sdsl::bit_vector b__;
+  sdsl::load_vector_from_file(b__, line, 0);
+  *b_ = b__;
 
   float N = b_->size();
   float S = floor(ceil(log2(N))*ceil(log2(N))/2);
   float B = floor(ceil(log2(N))/2);
 
-  uint64_t Rs_size_ = ceil(N/S) - 1;
-  uint64_t Rb_size_ = ceil(N/B) - 2;
+  uint64_t Rs_size_ = ceil(N/S);
+  uint64_t Rb_size_ = ceil(N/B);
 
   getline(in, line);
   free(Rs_);
