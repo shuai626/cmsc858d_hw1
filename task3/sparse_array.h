@@ -8,10 +8,9 @@ using namespace std;
 
 class sparse_array {
   vector<string> elems_;
-  uint64_t size_;
 
 public:
-  bitset<SIZE> b_;
+  sdsl::bit_vector b_;
 
   void create(uint64_t size);
   void append(string elem, uint64_t pos);

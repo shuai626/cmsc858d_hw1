@@ -6,7 +6,7 @@ select_support::select_support(rank_support* r) {
 
 uint64_t select_support::select1(uint64_t i) {
   uint64_t low = 1;
-  uint64_t high = SIZE;
+  uint64_t high = r_->b_->size();
   uint64_t mid = 0;
   uint64_t rank = 0;
 
@@ -17,7 +17,7 @@ uint64_t select_support::select1(uint64_t i) {
     rank = r_->rank1(mid);
 
     if (i == rank) {
-      // mid will always have neighbors, otherwise mid == 1 or SIZE which 
+      // mid will always have neighbors, otherwise mid == 1 or b_->size() which 
       // would break the while loop condition
       uint64_t rank_l = r_->rank1(mid - 1);
 

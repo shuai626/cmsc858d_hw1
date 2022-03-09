@@ -4,18 +4,18 @@
 
 using namespace std;
 
-
-int experiment (float sparsity, int operation_count, int func_type) {
+int experiment (int size, float sparsity, int operation_count, int func_type) {
     sparse_array s;
 
-    s.create(SIZE);
+    s.create(size);
 
-    int size = floor(SIZE * sparsity);
+    int cap_size = floor(size * sparsity);
+    int cap_length = floor(size/sparsity);
 
     int i;
-    for (i = 0; i < size; i++) {
+    for (i = 0; i < cap_size; i++) {
       string x = "a";
-      uint64_t pos = SIZE/sparsity*i + 1; 
+      uint64_t pos = cap_length*i+1;
 
       s.append(x, pos);
     }
@@ -23,23 +23,17 @@ int experiment (float sparsity, int operation_count, int func_type) {
     auto start = chrono::high_resolution_clock::now();
     for (i = 0; i < operation_count; i++) {
       if (func_type == 0) {
-        //append
+        
+        int r = rand() % size + 1;
+        string elem;
+        s.get_at_rank(r, elem);
       }
       else if (func_type == 1) {
-        // get_at_rank
+        int r = rand() % size + 1;
+        string elem;
+        s.get_at_index(r, elem);
       }
-      else if (func_type == 2) {
-        // get_at_index
-      }
-      else if (func_type == 3) {
-        // num_elem_at
-      }
-      else if (func_type == 4) {
-        // size()
-      }
-      else if (func_type == 5) {
-        // num_elem()
-      }
+
     }
     auto stop = chrono::high_resolution_clock::now();
 
@@ -48,27 +42,27 @@ int experiment (float sparsity, int operation_count, int func_type) {
     return duration.count();
 }
 
-int main () {
+int main (int argc, char **argv) {
     int i,j,k;
 
-    float sparsity [5] = {.01,.05,.10,.15,.20};
+    int size = atoi(argv[1]);
+    float sparsity = atof(argv[2]);
+
     int operation_count = 100;
-    int trials = 10000;
+    int trials = 100;
 
     float avg = 0;
 
-    for (i = 0; i < 5; i++) {
-      cout << "Sparsity: " << sparsity[i] << endl;;
-      for (k = 0; k <= 5; k++) {
-        for (j = 0; j < trials; j++) {
-          avg += experiment(sparsity[i], operation_count, k);
-        }
-        avg /= trials;
-        cout << "Average time for operation " << k << " (in microseconds): " << avg << endl;
-        
-        avg = 0;
-      } 
-    }
+    for (k = 0; k <= 1; k++) {
+      for (j = 0; j < trials; j++) {
+        avg += experiment(size, sparsity, operation_count, k);
+      }
+      avg /= trials;
+      cout << "Average time for operation " << k << " (in microseconds) | sparsity ("<< sparsity << ") | length (" << size << "): " << avg << endl;
+      
+      avg = 0;
+    } 
+  
 
     return 0;
 }

@@ -53,6 +53,7 @@ Deserializes the file `filename` into the `sparse_array` class.
 
 Perform the following from within the `task3` directory
 
-1. Modify the `SIZE` const variable found in `../task1/rank_support.h` to the size of your bitvector
+
+1. Install `sdsl` by following instructions at: https://github.com/simongog/sdsl-lite
 2. Call `make` 
-3. Run `sparse_array.exe`
+3. Run `./sparse_array.exe {1}` where `{1}` is the size of the bit_vector

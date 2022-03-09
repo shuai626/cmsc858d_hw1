@@ -35,4 +35,4 @@ Perform the following from within the `task1` directory
 
 1. Install `sdsl` by following instructions at: https://github.com/simongog/sdsl-lite
 2. Call `make` 
-3. Run `rank.exe {1}` where `{1}` is the size of the bit_vector
+3. Run `./rank.exe {1}` where `{1}` is the size of the bit_vector

@@ -3,11 +3,8 @@
 /* Creates an empty sparse array of length size 
   (the size of the underlying bitvector you will create). */
 void sparse_array::create(uint64_t size) {
-  if (size > SIZE) {
-    throw std::invalid_argument( "size provided will not fit in bitvector of length SIZE" );
-  }
-  size_ = size;
-  b_.reset();
+  sdsl::bit_vector b(size);
+  b_ = b;
 }
 
 /* Appends the element elem at index pos of the sparse array. 
@@ -17,8 +14,8 @@ void sparse_array::create(uint64_t size) {
   assume that you will always have pos < size (but you should 
   probably guard against this anyway). */
 void sparse_array::append(string elem, uint64_t pos) {
-  if (pos <= size_) {
-    b_.set(pos - 1, true);
+  if (pos <= b_.size()) {
+    b_[pos - 1] = 1;
 
     elems_.push_back(elem);
   }
@@ -28,9 +25,7 @@ void sparse_array::append(string elem, uint64_t pos) {
   array in the reference elem. It returns true if there was >= r items
  in the sparse array and false otherwise.*/
 bool sparse_array::get_at_rank(uint64_t r, string& elem) {
-  uint64_t max_r = num_elem();
-
-  if (r <= max_r) {
+  if (r <= elems_.size()) {
     elem = elems_[r-1];
     return true;
   } 
@@ -65,22 +60,23 @@ uint64_t sparse_array::num_elem_at(uint64_t r) {
 
 /*  Returns the size of the sparse array. */
 uint64_t sparse_array::size() {
-  return size_;
+  return b_.size();
 }
 
 /* Returns the number of present elements in the sparse array 
   (i.e. the number of 1s in the bitvector). */
 uint64_t sparse_array::num_elem() {
   rank_support r_(&b_);
-  return r_.rank1(size_);
+  return r_.rank1(b_.size());
 }
 
 /* Saves the sparse array to the file fname.*/
 void sparse_array::save(string& fname) {
   ofstream out;
   out.open(fname);
-  out << b_.to_string() << endl;
-  out << size_ << endl;
+  string bv_fname = fname + "_bv";
+  sdsl::store_to_file(b_, bv_fname);
+  out << bv_fname << endl;
 
   int i;
   for (i = 0; i < elems_.size(); i++) {
@@ -99,12 +95,7 @@ void sparse_array::load(string& fname) {
   string line;
 
   getline(in, line);
-  bitset<SIZE> new_b(line);
-  b_ &= 0b0;
-  b_ |= new_b;
-
-  getline(in, line);
-  size_ = stoll(line);
+  sdsl::load_vector_from_file(b_, line, 0);
 
   elems_.clear();
   
