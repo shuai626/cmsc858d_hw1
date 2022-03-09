@@ -40,10 +40,24 @@ int main (int argc, char **argv) {
 
     sdsl::bit_vector bs(size);
 
+    bs[5] = 1;
+    bs[8] = 1;
+
     rank_support r(&bs);
     int i;
 
     select_support s(&r);
+
+    for (i = 1; i <= 2; i++) {
+      cout << s.select1(i);
+    }
+
+    string fname = "test";
+    s.load(fname);
+
+    for (i = 1; i <= 2; i++) {
+      cout << s.select1(i);
+    }
 
     int capacity = size/2;
     int select1_operations = 100;
